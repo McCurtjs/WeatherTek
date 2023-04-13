@@ -1,0 +1,19 @@
+<div>
+  <p>
+    Submit a location to see a weather forecast.
+  </p>
+  <p>
+    Locations can be in the form of a full or partial address, an area code,
+    or just the name of a landmark.
+  </p>
+  <p>
+    <%= form_with url: search_path, method: :post do |form| %>
+      <%= form.text_field :query %>
+      <%= form.submit :submit %>
+    <% end %>
+
+    <p class='error-text'>
+      <%= flash[:error] %>
+    </p>
+  </p>
+</div>

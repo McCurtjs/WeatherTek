@@ -1,0 +1,56 @@
+<div>
+  <% if @error == nil %>
+    <h2><%= @forecast.data.resolvedAddress %></h2>
+    <p>
+      on <%= @forecast.local_time.strftime('%b %e at %l:%M%p') %>
+      (UTC<%= '%+i' % @forecast.data.tzoffset.to_i %>)
+      <% if @forecast.cached %>
+        (Displaying cached data)
+      <% else %>
+        (Hot off the presses!)
+      <% end %>
+    </p>
+
+    <p>
+      <%= @forecast.data.description %>
+    </p>
+
+    <p>
+      <%= link_to 'Return to homepage', root_path %>
+    </p>
+
+    <%= image_tag "#{@forecast.current_hourly_data.icon.split('-').first}.png", width: 200, height: 200 %>
+
+    <p>
+      <b>Current: <%= @forecast.current_hourly_data.temp %>&deg; F</b>
+      <br>
+      Daily high: <%= @forecast.current_day.tempmax %>
+      <br>
+      Daily low: <%= @forecast.current_day.tempmin %>
+    </p>
+
+    For the next week...
+
+    <div>
+      <% current_day_offset = @forecast.current_day_index %>
+      <% (1..7).each do |i| %>
+        <% day = @forecast.data.days[i + current_day_offset] %>
+
+        <div class='tile'>
+          <h3><%= Time.parse(day.datetime).strftime('%a') %></h3>
+          <%= image_tag "#{day.icon.split('-').first}.png", width: 75, height: 75 %>
+          <br>
+          High: <%= day.tempmax %>
+          <br>
+          Low: <%= day.tempmin %>
+          <br>
+        </div>
+
+      <% end %>
+    </div>
+  <% else %>
+    <p class='error-text'>
+      <%= @error %>
+    </p>
+  <% end %>
+</div>
