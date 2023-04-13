@@ -8,7 +8,7 @@ This is a Ruby on Rails demo project that gets and displays a weather forecast.
 
 Before building the project, make sure to put the `master.key` file in the
 `./config` directory, or the remote calls to the weather and location services
-won't work (if you don't have this, you can email me at curtmccoy@gmail.com).
+won't work (if you don't have this, you can email me at curtmccoy+gh@gmail.com).
 
 To build, it should be fairly standard - just `bundle install` and
 `bundle update`, after which `rails server` should start it up with a puma
@@ -32,6 +32,69 @@ Here I'll detail some of the design choices and implementation details.
 For some, I'll include a "Next Steps" section to detail how I would continue if
 planning to expand on this project.
 
+### UI
+
+There are two pages that will be rendered by this project: a basic search page,
+and the forecast page for a given location. Both pages use a shared header.
+
+#### Search UI
+
+The search page uses a simple text entry form that can be submitted either by
+using the "Submit" button or pressing enter. An error message will be displayed
+if a service can't be accessed or the location entered can't be resolved (for
+example, an input of "my house" will cause it to fail to find).
+
+#### Forecast UI
+
+The forecast page displays the resolved location per the Weather API (generally,
+the area code, city, state, and country, or the equivalent of those) as well as
+the current time in the area along with its UTC offset (this is not necessarily
+the local system time, it's the time of the area represented by the forecast).
+
+If the page needed an external request to generate, it will display the message,
+"Hot off the presses!". If the data was found in the cache, it will instead say,
+"Displaying cached data".
+
+The large central image uses an icon picked from among 7 images based on the
+`icon` field in the WeatherAPI data. Above the icon is a plain-text string from
+Weather API describing the weather conditions and expectations (for example,
+"Similar temperatures continuing with no rain expected"). Below the large image
+is the current hourly temperature in Fahrenheit in bold, along with the high and
+low values from the daily average data.
+
+Below the central image is the forecast of expected daily averages for the
+upcoming week, starting the following day, including the high, low, and a
+smaller rendering of the same set of icons for those days.
+
+**Next Steps:**
+
+The data provided by Weather API is very thorough, and there is a lot more
+interesting inclusions already present that could be added for display.
+
+One feature I considered adding, but opted against to save on time, was improved
+dynamic icons - the data contians a "moonphase" value and sunrise/sunset fields.
+My intent was to split the images into foreground and background images, with a
+sun and (full) moon for the latter, with the former being reserved for weather
+effects from precipitation, so the "partly cloudy" icon would then actually be
+the cloud image (with transparency) over the sun image for day, or moon image
+for night. I also wanted to use the moon phase to put a period accurate shadow
+over the moon image to form crescents.
+
+Another display feature that would be nice to have would be charting for the
+weekly temperature. For this I was considering adding a canvas behind the weekly
+data display which I could then just draw lines or polygons over to correspond
+with the day tiles. These charts could even have fairly high fidelity, as each
+day has access to its own set of 24 hours, each of which contains temperature as
+well as precipitation data that could also be charted.
+
+It would also be nice to have a toggle that allowed a switch between Fahrenheit
+and Celsius - the back-end would stick to one (probably F) and do manual
+conversions for display only.
+
+These features would be nice to have, but while they're not necessarily
+difficult to implement, front-end work can be very time consuming and this is
+supposed to be more of a back-end demo.
+
 ### Inputs
 
 Rather than requiring a full address and parsing out a zipcode, I wanted to
@@ -41,7 +104,7 @@ This means I can still cache based on zip per the requirements, but can be a
 little more specific by using city names as well (necessary for foreign area
 codes which can conflict with US codes).
 
-Next Steps:
+**Next Steps:**
 
 The inputs don't always resolve accurately - as mentioned, "Eiffel Tower" will
 succed, but "Arc de Triomphe" will resolve to "chisinau-2012", a city in
@@ -65,7 +128,7 @@ Bosquet" restaurant. This does put more demand on the Mapquest lookup, which has
 a free-tier limit of 15,000 requests per month, compared to the Weather API's
 limit of 1000 per day.
 
-Next Steps:
+**Next Steps:**
 
 I'd want to do more research on mapping API options, including monitoring usage
 for the website itself to see if a change needed to be made. For scalability, a
@@ -98,7 +161,7 @@ For the moment, remote API keys are stored in `config/credentials.yml.enc`,
 which is encrypted using the value in the `master.key` file and checked into the
 repository.
 
-Next Steps:
+**Next Steps:**
 
 While for a project of this scale an included encrypted credentials file seems
 fine, I still don't like having it checked into the repository. For a larger
@@ -219,7 +282,7 @@ The controller tests attempt to go through as much relevant code as possible,
 including underlying functions of other classes being used, in order to give as
 much of a "real-use-case" for the code path as possible.
 
-Next Steps:
+**Next Steps:**
 
 Previously I've used controller specs in the past as more integration level
 testing, but doing a little reading after the fact, apparently this is no longer

@@ -12,11 +12,11 @@
     </p>
 
     <p>
-      <%= @forecast.data.description %>
+      <%= link_to 'Return to homepage', root_path %>
     </p>
 
     <p>
-      <%= link_to 'Return to homepage', root_path %>
+      <%= @forecast.data.description %>
     </p>
 
     <%= image_tag "#{@forecast.current_hourly_data.icon.split('-').first}.png", width: 200, height: 200 %>
